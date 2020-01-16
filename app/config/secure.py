@@ -10,7 +10,7 @@ USERNAME = 'root'
 PASSWORD = '123123'
 HOST = '127.0.0.1'
 PORT = '3306'
-DATABASE = 'testDB'
+DATABASE = '1981'
 SQLALCHEMY_DATABASE_URI = '{}+{}://{}:{}@{}:{}/{}?charset=utf8&auth_plugin=mysql_native_password'.format(
     DIALECT, DRIVER, USERNAME, PASSWORD, HOST, PORT, DATABASE
 )
@@ -18,3 +18,4 @@ SQLALCHEMY_DATABASE_URI = '{}+{}://{}:{}@{}:{}/{}?charset=utf8&auth_plugin=mysql
 SQLALCHEMY_COMMIT_ON_TEARDOWN = True
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 # endregion
+SECRET_KEY = 'IＬＯＶＥ：ＩＦＣＺＴ'

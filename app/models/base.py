@@ -33,10 +33,10 @@ class Query(BaseQuery):
             raise NotFound()
         return rv
 
-    def first_or_404(self):
+    def first_or_404(self,msg=None):
         rv = self.first()
         if not rv:
-            raise NotFound()
+            raise NotFound(msg=msg)
         return rv
 
 

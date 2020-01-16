@@ -1,52 +1,64 @@
 """
     Created by IFCZT on  2020/1/8 15:49
 """
-from wtforms import StringField, IntegerField
-from wtforms.validators import DataRequired, length, Email, Regexp
-from wtforms import ValidationError
+from wtforms import StringField, IntegerField, BooleanField
 
 from app.libs.enums import ClientTypeEnum
-from app.libs.error_code import Forbidden
+from app.libs.error_code import Forbidden, USER_EXISTS, NICKNAME_EXISTS, ClientTypeError
 from app.models.User import User
+from app.validators import DataRequired, Regexp, Length as length
 from app.validators.base import BaseForm as Form
 
 __author__ = 'IFCZT'
 
 
 class ClientForm(Form):
-    account = StringField(validators=[DataRequired(message='不允许为空'), length(
-        min=5, max=32
-    )])
-    password = StringField()
     type = IntegerField(validators=[DataRequired()])
 
     def validate_type(self, value):
         try:
             client = ClientTypeEnum(value.data)
-        except ValueError as e:
-            raise e
+        except ValueError:
+            raise ClientTypeError()
         self.type.data = client
 
 
-class AccountForm(ClientForm):
-    account = StringField(validators=[
-        Email(message='邮箱不合法')
-    ])
+class AccountForm(Form):
+    account = StringField(validators=[DataRequired(), length(
+        min=4, max=10
+    )])
     password = StringField(validators=[
         DataRequired(),
-        # password can only include letters , numbers and "_"
         Regexp(r'^[A-Za-z0-9_*&$#@]{6,22}$')
     ])
     nickname = StringField(validators=[DataRequired(),
                                        length(min=2, max=22)])
+    auth = StringField(validators=[DataRequired()])
+    @staticmethod
+    def validate_account(self, value):
+        if User.query.filter_by(account=value.data).first():
+            raise Forbidden(USER_EXISTS)
+
+    @staticmethod
+    def validate_nickname(self, value):
+        if User.query.filter_by(nickname=value.data).first():
+            raise Forbidden(NICKNAME_EXISTS)
 
 
-    def validate_account(self,value):
-        if User.query.filter_by(email=value.data).first():
-            raise Forbidden()
+class LoginForm(Form):
+    account = StringField(validators=[DataRequired(), length(min=3, max=10)])
+    password = StringField(validators=[
+        DataRequired(),
+        # 密码只能包含字母、数字和 '_'
+        Regexp(r'^[A-Za-z0-9_*&$#@]{6,22}$')
+    ])
 
+class PageLimitForm(Form):
+    page =  IntegerField(validators=[DataRequired()],default=1)
+    limit = IntegerField(validators=[DataRequired()],default=20)
 
-
+class UserListForm(PageLimitForm):
+    u_type = BooleanField(default=True)
 
 class TokenForm(Form):
     token = StringField(validators=[DataRequired()])

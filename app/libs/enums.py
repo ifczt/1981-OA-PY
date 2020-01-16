@@ -4,10 +4,14 @@
 __author__ = 'IFCZT'
 from enum import Enum
 
+
 class AuthorityEnum(Enum):
-    SUPER_ADMIN = 1
-    ADMIN = 2
-    USER = 3
+    GOD = 10
+    SUPER_ADMIN = 9
+    ADMIN = 8
+    OPERATOR = 7
+    USER = 1
+
 
 class ClientTypeEnum(Enum):
     USER_EMAIL = 100
@@ -17,3 +21,5 @@ class ClientTypeEnum(Enum):
     USER_MINA = 200
     # 微信公众号
     USER_WX = 201
+
+

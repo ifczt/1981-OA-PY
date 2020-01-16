@@ -4,8 +4,9 @@
 from werkzeug.exceptions import HTTPException
 
 from app import create_app
+from app.config.setting import DEBUG
 from app.libs.error import APIException
-from app.libs.error_code import ServerError
+from app.libs.error_code import ServerError, URL_NOT_EXISTS
 
 __author__ = 'IFCZT'
 
@@ -18,13 +19,10 @@ def framework_error(e):
         return e
     if isinstance(e, HTTPException):
         code = e.code
-        msg = e.description
-        error_code = 1007
-        return APIException(msg, code, error_code)
+        msg = URL_NOT_EXISTS if code ==  404 else e.description
+        return APIException(msg, code)
     else:
-        # 调试模式
-        # log
-        if not app.config['DEBUG']:
+        if not DEBUG:
             return ServerError()
         else:
             raise e

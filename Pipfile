@@ -12,6 +12,9 @@ sqlalchemy = "*"
 mysql-connector = "*"
 flask-sqlalchemy = "*"
 wtforms = "*"
+numpy = "*"
+flask-cors = "*"
+flask-httpauth = "*"
 
 [requires]
 python_version = "3.7"

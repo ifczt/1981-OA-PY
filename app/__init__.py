@@ -1,8 +1,8 @@
 """
     Created by IFCZT on  2020/1/8 15:17
 """
-from flask import Flask
-
+from .app import Flask
+from flask_cors import *
 __author__ = 'IFCZT'
 
 def register_blueprints(_app):
@@ -20,6 +20,7 @@ def register_plugin(_app):
 
 def create_app():
     app = Flask(__name__)
+    CORS(app)
     app.config.from_object('app.config.setting')
     app.config.from_object('app.config.secure')
 
