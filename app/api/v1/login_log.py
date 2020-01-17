@@ -3,12 +3,17 @@
 """
 __author__ = 'IFCZT'
 
-from flask import request
+import time
+
+from flask import request,g
 
 from app.models.LoginLog import LoginLog
 from app.models.base import db
 
 
 def insert_log(u_id):
-    log = LoginLog(u_id=u_id, ip=request.remote_addr)
+    data = {'u_id':u_id,'ip':request.remote_addr}
+    hour = time.localtime().tm_hour
+    print(hour)
+    log = LoginLog(**data)
     db.session.add(log)

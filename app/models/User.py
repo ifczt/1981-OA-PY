@@ -7,6 +7,7 @@ from pip._vendor.appdirs import unicode
 from sqlalchemy import Column, Integer, String, SmallInteger
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from app.api.v1 import login_log
 from app.libs.error_code import AuthFailed, USER_NOT_EXISTS
 from app.models.base import Base, db
 
@@ -52,6 +53,7 @@ class User(Base):
         user = User.query.filter_by(account=account).first_or_404(USER_NOT_EXISTS)
         if not user.check_password(password):
             raise AuthFailed()
+        login_log.insert_log(user.u_id)
         return {'u_id': user.u_id, 'author': user.author}
 
     def check_password(self, raw):

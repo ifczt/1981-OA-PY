@@ -62,3 +62,6 @@ class UserListForm(PageLimitForm):
 
 class TokenForm(Form):
     token = StringField(validators=[DataRequired()])
+
+class RateForm(Form):
+    scur = StringField(validators=[DataRequired()])

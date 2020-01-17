@@ -8,7 +8,7 @@ from sqlalchemy import Column, Integer, String
 
 class LoginLog(Base):
     id = Column(Integer, autoincrement=True, primary_key=True, nullable=False)
-    u_id = Column(String(128), unique=True)
+    u_id = Column(String(128))
     ip = Column(String(128))
 
     def keys(self):

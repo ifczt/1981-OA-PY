@@ -1,10 +1,14 @@
 <component name="ProjectDictionaryState">
   <dictionary name="Administrator">
     <words>
+      <w>appkey</w>
       <w>ifczt</w>
       <w>mysqlconnector</w>
+      <w>ratenm</w>
       <w>redprint</w>
+      <w>scur</w>
       <w>sqlalchemy</w>
+      <w>tcur</w>
     </words>
   </dictionary>
 </component>

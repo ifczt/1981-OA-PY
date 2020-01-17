@@ -60,7 +60,6 @@ def get_list():
     limit = page_box.limit.data
     page = (page_box.page.data-1)*limit
     u_type = page_box.u_type.data
-    print(u_type,limit,page)
     if u_type:
         sql = User.query.filter(User.parent==g.user.u_id,User.author!=AuthorityEnum.USER.name)
     else:
