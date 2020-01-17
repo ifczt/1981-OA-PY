@@ -6,7 +6,7 @@ from flask import g, jsonify, Response, request
 from app.api.v1.token import create_token, auth
 from app.libs.enums import AuthorityEnum
 from app.libs.error_code import Success, LOGIN_SUCC, LOGOUT_SUCC, USER_INFO_GET, GET_AUTH_SUCC, GET_USER_LIST, \
-    SuccessSQL
+    SuccessSQL, USER_CREAT
 from app.libs.redprint import Redprint
 from app.models.User import User
 from app.validators.forms import AccountForm, LoginForm, PageLimitForm, UserListForm
@@ -20,10 +20,10 @@ api = Redprint('user')
 @auth.login_required
 def create_account():
     form = AccountForm().validate_for_api()
-    User.register_by_account(
+    user = User.register_by_account(
         form.nickname.data, form.account.data, form.password.data,
         form.auth.data, g.user.u_id)
-    return Success()
+    return SuccessSQL(msg=USER_CREAT,data=user)
 
 
 @api.route('/login', methods=["POST"])

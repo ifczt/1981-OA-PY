@@ -47,6 +47,7 @@ class User(Base):
             user.u_id = unicode(uuid4())
             user.parent = u_id
             db.session.add(user)
+        return user
 
     @staticmethod
     def verify(account, password):
