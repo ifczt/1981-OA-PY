@@ -60,5 +60,5 @@ def verify_auth_token(token):
 @api.route('', methods=['get'])
 @auth.login_required
 def regain():
-    data = create_token(g.user.u_id)
+    data = create_token(g.user.u_id, g.user.author)
     return Success(msg=REGAIN_TOKEN, data=data)

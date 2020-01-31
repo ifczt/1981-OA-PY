@@ -6,10 +6,11 @@ from flask import g, jsonify, Response, request
 from app.api.v1.token import create_token, auth
 from app.libs.enums import AuthorityEnum
 from app.libs.error_code import Success, LOGIN_SUCC, LOGOUT_SUCC, USER_INFO_GET, GET_AUTH_SUCC, GET_USER_LIST, \
-    SuccessSQL, USER_CREAT
+    SuccessSQL, USER_CREAT, USER_NOT_EXISTS
 from app.libs.redprint import Redprint
 from app.models.User import User
-from app.validators.forms import AccountForm, LoginForm, PageLimitForm, UserListForm
+from app.models.base import db
+from app.validators.forms import AccountForm, LoginForm, PageLimitForm, UserListForm, IDForm
 
 __author__ = 'IFCZT'
 
@@ -22,8 +23,8 @@ def create_account():
     form = AccountForm().validate_for_api()
     user = User.register_by_account(
         form.nickname.data, form.account.data, form.password.data,
-        form.auth.data, g.user.u_id)
-    return SuccessSQL(msg=USER_CREAT,data=user)
+        form.auth.data, form.parent.data or g.user.u_id, form.section.data)
+    return SuccessSQL(msg=USER_CREAT, data=user)
 
 
 @api.route('/login', methods=["POST"])
@@ -53,20 +54,41 @@ def get_auth_list():
     return Success(GET_AUTH_SUCC, data=data)
 
 
+# region 获取用户列表
 @api.route('/list', methods=['post'])
 @auth.login_required
 def get_list():
     page_box = UserListForm().validate_for_api()
     limit = page_box.limit.data
-    page = (page_box.page.data-1)*limit
+    page = (page_box.page.data - 1) * limit
     u_type = page_box.u_type.data
-    if u_type:
-        sql = User.query.filter(User.parent==g.user.u_id,User.author!=AuthorityEnum.USER.name)
+    if u_type:  # 判断获取用户列表的类型 内部或为企业
+        sql = User.query.filter(User.author != AuthorityEnum.USER.name)
     else:
-        sql = User.query.filter(User.parent==g.user.u_id,User.author==AuthorityEnum.USER.name)
-    user_list =sql.limit(limit).offset(page).all()
-    total = sql.limit(limit).offset(page).count()
-    return SuccessSQL(msg=GET_USER_LIST,data={'list':user_list,'total':total})
+        sql = User.query.filter(User.author == AuthorityEnum.USER.name)
+    if g.user.author != AuthorityEnum.GOD.name:
+        sql = sql.filter(User.parent == g.user.u_id)
+    user_list = sql.filter_by().limit(limit).offset(page).all()
+    total = sql.filter_by().limit(limit).offset(page).count()
+    return SuccessSQL(msg=GET_USER_LIST, data={'list': user_list, 'total': total})
+
+
+# endregion
+
+
+@api.route('', methods=['put'])
+@auth.login_required
+def update_user():
+    return Success()
+
+
+@api.route('', methods=['delete'])
+@auth.login_required
+def del_user():
+    form = IDForm().validate_for_api()
+    _user = User.query.filter_by(id=form.id.data).first_or_404(USER_NOT_EXISTS)
+    _user.delete()
+    return Success()
 
 
 @api.route('/logout', methods=["get"])

@@ -19,13 +19,14 @@ class User(Base):
     u_id = Column(String(128), unique=True)
     account = Column(String(24), unique=True, nullable=False)
     nickname = Column(String(24), unique=True)
-    author = Column(String(24), default=1)
-    parent =  Column(String(128), unique=True)
-    state = Column(SmallInteger,default=1)
+    author = Column(String(24))
+    section = Column(String(24))
+    parent = Column(String(128))
+    state = Column(SmallInteger, default=1)
     _password = Column('password', String(100))
 
     def keys(self):
-        return ['id', 'account', 'nickname', 'author','state']
+        return ['id', 'u_id', 'account', 'nickname', 'author', 'state', 'section']
 
     @property
     def password(self):
@@ -37,7 +38,7 @@ class User(Base):
 
     # 声明静态注册账号方法
     @staticmethod
-    def register_by_account(nickname, account, password, author, u_id):
+    def register_by_account(nickname, account, password, author, parent, section):
         with db.auto_commit():
             user = User()
             user.nickname = nickname
@@ -45,7 +46,8 @@ class User(Base):
             user.password = password
             user.author = author
             user.u_id = unicode(uuid4())
-            user.parent = u_id
+            user.parent = parent
+            user.section = section
             db.session.add(user)
         return user
 

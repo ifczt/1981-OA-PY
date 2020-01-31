@@ -3,7 +3,7 @@
 """
 from flask import Blueprint
 
-from app.api.v1 import user, token, exchange_rate
+from app.api.v1 import user, token, exchange_rate, section
 
 __author__ = 'IFCZT'
 
@@ -13,4 +13,5 @@ def create_blueprint():
     user.api.register(bp)
     token.api.register(bp)
     exchange_rate.api.register(bp)
+    section.api.register(bp)
     return bp

@@ -34,6 +34,9 @@ class AccountForm(Form):
     nickname = StringField(validators=[DataRequired(),
                                        length(min=2, max=22)])
     auth = StringField(validators=[DataRequired()])
+    parent = StringField()
+    section = StringField()
+
     @staticmethod
     def validate_account(self, value):
         if User.query.filter_by(account=value.data).first():
@@ -53,15 +56,34 @@ class LoginForm(Form):
         Regexp(r'^[A-Za-z0-9_*&$#@]{6,22}$')
     ])
 
+
 class PageLimitForm(Form):
-    page =  IntegerField(validators=[DataRequired()],default=1)
-    limit = IntegerField(validators=[DataRequired()],default=20)
+    page = IntegerField(validators=[DataRequired()], default=1)
+    limit = IntegerField(validators=[DataRequired()], default=20)
+
 
 class UserListForm(PageLimitForm):
     u_type = BooleanField(default=True)
 
+
 class TokenForm(Form):
     token = StringField(validators=[DataRequired()])
 
+
 class RateForm(Form):
     scur = StringField(validators=[DataRequired()])
+    refresh = BooleanField()
+
+
+class SectionForm(Form):
+    name = StringField(validators=[DataRequired()])
+
+
+class IDForm(Form):
+    id = IntegerField(validators=[DataRequired()])
+
+
+class ProductForm(Form):
+    u_id = StringField(validators=[DataRequired()])
+    product = StringField(validators=[DataRequired()])
+    url = StringField()
